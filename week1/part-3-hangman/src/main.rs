@@ -35,6 +35,57 @@ fn main() {
     let secret_word_chars: Vec<char> = secret_word.chars().collect();
     // Uncomment for debugging:
     // println!("random word: {}", secret_word);
-
+    let mut charCount = secret_word_chars.len();
+    let mut incorrect_guess = 0;
+    let mut word_chars: Vec<char> = Vec::new();
+    let mut already: Vec<char> = Vec::new();
+    for i in 0..charCount {
+        word_chars.push('_');
+    }
     // Your code here! :)
+    while charCount != 0 && incorrect_guess != NUM_INCORRECT_GUESSES {
+        print!("The word so far is ");
+        for i in 0..word_chars.len() {
+            print!("{}", word_chars[i]);
+        }
+        println!();
+        print!("You have guessed the following letters: ");
+        for i in 0..already.len() {
+            print!("{}", already[i]);
+        }
+        println!();
+        println!("You have {:?} guesses left", NUM_INCORRECT_GUESSES - incorrect_guess);
+        print!("Please guess a letter: ");
+        io::stdout()
+            .flush()
+            .expect("Error flushing stdout.");
+        let mut guess = String::new();
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Error reading line.");
+        println!();
+        let mut is_right = false;
+        for i in 0..secret_word_chars.len() {
+            if guess.chars().nth(0).unwrap() == secret_word_chars[i] && word_chars[i] == '_' {
+                word_chars[i] = guess.chars().nth(0).unwrap();
+                is_right = true;
+                break;
+            }
+        }
+        already.push(guess.chars().nth(0).unwrap());
+        if is_right == false {
+            println!("Sorry, that letter is not in the word");
+            incorrect_guess = incorrect_guess + 1;
+        } else {
+            charCount = charCount - 1;
+        }
+        println!();
+    }
+    if incorrect_guess == NUM_INCORRECT_GUESSES {
+        println!("Sorry, you ran out of guesses!");
+    } else {
+        println!("Congratulations you guessed the secret word: {}!", secret_word);
+    }
+
+
 }
